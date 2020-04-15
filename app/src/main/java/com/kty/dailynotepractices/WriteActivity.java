@@ -114,7 +114,6 @@ public class WriteActivity extends AppCompatActivity {
 
         return image;
     }
-
     @Override//startActivityForResult를 위한 함수
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
