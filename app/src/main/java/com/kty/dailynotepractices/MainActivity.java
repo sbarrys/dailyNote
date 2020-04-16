@@ -4,14 +4,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.FragmentManager;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +28,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
-    private TextView main_notepad;
     private int RESUlT_CODE;
     private TextView button_closedrawer;
     private String today;
@@ -28,10 +35,34 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private View drawer;
     private TextView textview_date ;
+    private LinearLayout button_showAllBoard;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    //s: 게시글 전체보기(fragment)
+        button_showAllBoard= (LinearLayout)findViewById(R.id.button_showAllBoard);
+        button_showAllBoard.setClickable(true);
+        button_showAllBoard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LinearLayout ll= findViewById(R.id.line);
+                ll.removeAllViews();
+                FragmentTransaction transaction= getSupportFragmentManager().beginTransaction();
+                Fragment BoardActivity_fragment= new BoardActivity_fragment();
+                transaction.replace(R.id.frame,BoardActivity_fragment);
+
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+            }
+        });
+
+    //e: 게시글 전체보기 (fragment)
+
+
+
+
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         Calendar c1 = Calendar.getInstance();
@@ -40,18 +71,11 @@ public class MainActivity extends AppCompatActivity {
         textview_date.setText(today);
 
 
-        main_notepad= (TextView)findViewById(R.id.main_notepad);
-        main_notepad.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast myToast = Toast.makeText(getApplicationContext(),"토스트메세지이빈다", Toast.LENGTH_SHORT);
-                myToast.show();
-                Intent intent= new Intent(MainActivity.this,WriteActivity.class);
-                intent.putExtra("today",today);
-                startActivityForResult(intent,RESUlT_CODE);
+//클릭햇을떄 이동하는 intent만들어야한다.//
 
-            }
-        });
+
+
+
 
         //드로우어 끄기버튼
         button_closedrawer =(TextView)findViewById(R.id.button_closedrawer);
@@ -105,8 +129,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
             if (resultCode == RESULT_OK) {
                String content= data.getStringExtra("content");
-                main_notepad.setText(content);
-                main_notepad.setGravity(Gravity.START);
+               Toast.makeText(getApplicationContext(),content,Toast.LENGTH_SHORT).show();
             }
 
 

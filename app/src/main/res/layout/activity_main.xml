@@ -17,9 +17,10 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:orientation="horizontal"
-            android:layout_weight="1">
+            android:weightSum="1"
+            >
 
             <ImageView
                 android:id="@+id/button_opendrawer"
@@ -53,7 +54,9 @@
             </ImageView>
 
         </LinearLayout>
+
         <LinearLayout
+            android:id="@+id/line"
             android:layout_width="match_parent"
             android:layout_height="20dp">
             <View
@@ -77,21 +80,22 @@
 
 
         </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <FrameLayout
+        android:id="@+id/frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="99" >
-            <TextView
 
-                android:id="@+id/main_notepad"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="여기에 입력하세요"
-                android:gravity="center"
-                android:textSize="20sp"/>
 
-        </LinearLayout>
+
+    </FrameLayout>
+
+
+</LinearLayout>
 
 
     </LinearLayout>
