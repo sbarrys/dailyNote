@@ -3,4 +3,13 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string-array name="location">
+        <item>---- 선택 ----</item>
+        <item>음악 ON</item>
+        <item>음악 OFF</item>
+    </string-array>
+
+
 </resources>

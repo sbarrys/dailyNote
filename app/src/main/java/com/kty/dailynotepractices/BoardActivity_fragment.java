@@ -25,8 +25,6 @@ public class BoardActivity_fragment extends Fragment {
     private RecyclerView.LayoutManager linearLayoutManager;
     public  BoardActivity_fragment(){
 
-
-
     }
 
     @Nullable

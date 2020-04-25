@@ -9,6 +9,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.FragmentManager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,10 +18,13 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,11 +41,67 @@ public class MainActivity extends AppCompatActivity {
     private View drawer;
     private TextView textview_date ;
     private LinearLayout button_showAllBoard;
+    private FrameLayout frame ;
+    private ArrayAdapter arrayAdapter;
+    private Boolean Music_ONOFF;
+    private LinearLayout button_dialog_background_music_onoff;
+    public void setDialog() {
+        Music_ONOFF=false;
+        //다이얼로그 생성
+        final AlertDialog.Builder aBuilder = new AlertDialog.Builder(MainActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.dialog_music_onoff, null);
+
+        aBuilder.setTitle("Background Music");       // 제목 설정
+
+        // 스피너 설정
+        final Spinner sp = (Spinner) mView.findViewById(R.id.spinner_select_music_onoff);
+
+        // 스피너 어댑터 설정
+        arrayAdapter = ArrayAdapter.createFromResource(this, R.array.location, android.R.layout.simple_spinner_item);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        sp.setAdapter(arrayAdapter);
+//        sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                if(i==1){
+//                    Music_ONOFF=true;
+//
+//                }else{
+//                    Music_ONOFF=false;
+//
+//                }
+//            }
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//                Music_ONOFF=false;
+//            }
+//        });
+        aBuilder.setSingleChoiceItems(arrayAdapter, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if(i==1){
+                    Music_ONOFF=true;
+
+                }else{
+                    Music_ONOFF=false;
+
+                }
+
+                dialogInterface.dismiss();
+            }
+        });
+
+        //aBuilder.setView(mView);
+            AlertDialog dialog = aBuilder.create();
+        dialog.show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    //s: 게시글 전체보기(fragment)
+
+        //s: 게시글 전체보기(fragment)
         button_showAllBoard= (LinearLayout)findViewById(R.id.button_showAllBoard);
         button_showAllBoard.setClickable(true);
         button_showAllBoard.setOnClickListener(new View.OnClickListener() {
@@ -59,6 +120,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
     //e: 게시글 전체보기 (fragment)
+        frame = findViewById(R.id.frame);
+        frame.setClickable(true);
+        frame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentTransaction transaction= getSupportFragmentManager().beginTransaction();
+                Fragment writeActivity= new WriteActivity();
+                transaction.replace(R.id.frame,writeActivity);
+
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+            }
+        });
+
 
 
 
@@ -76,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
         //드로우어 끄기버튼
         button_closedrawer =(TextView)findViewById(R.id.button_closedrawer);
         button_closedrawer.setClickable(true);
@@ -89,6 +164,19 @@ public class MainActivity extends AppCompatActivity {
         //드로우어 버튼
         drawerLayout= (DrawerLayout)findViewById(R.id.drawerLayout);
         drawer= (View)findViewById(R.id.drawer);
+
+        //다이얼로그 생성버튼
+         button_dialog_background_music_onoff = drawer.findViewById(R.id.button_dialog_background_music_onoff);
+         button_dialog_background_music_onoff.setClickable(true);
+        button_dialog_background_music_onoff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //s: 다이얼로그 설정
+                setDialog();
+                //e: 다이얼로그 설정
+
+            }
+        });
         button_opendrawer= (ImageView)findViewById(R.id.button_opendrawer);
         button_opendrawer.setClickable(true);
         button_opendrawer.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +189,11 @@ public class MainActivity extends AppCompatActivity {
 
         //
         drawerLayout.setDrawerListener(drawerListener);
+
+
     }
+
+
     DrawerLayout.DrawerListener drawerListener= new DrawerLayout.DrawerListener() {
         @Override
         public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
@@ -122,7 +214,11 @@ public class MainActivity extends AppCompatActivity {
         public void onDrawerStateChanged(int newState) {
 
         }
+
+
     };
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

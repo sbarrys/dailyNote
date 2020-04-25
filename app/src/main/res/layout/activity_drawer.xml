@@ -96,6 +96,8 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/button_dialog_background_music_onoff"
+
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="10dp">
@@ -108,7 +110,7 @@
                     android:src="@drawable/icon"/>
                 <TextView
                     android:layout_gravity="center"
-                    android:text="오늘이야기"
+                    android:text="노래켜기"
                     android:textSize="15sp"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
