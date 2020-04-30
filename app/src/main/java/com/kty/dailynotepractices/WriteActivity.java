@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
 import android.app.Activity;
@@ -18,6 +19,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,11 +51,61 @@ public class WriteActivity extends Fragment {
     private static final int   REQUEST_IMAGE_CAPTURE= 672;
     private Uri photoUri;
     private String imageFilePath;
+    DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference conditionRef = mRootRef.child("content");//데이터가 있을 위치를 정해준다.  //이데이터의 변화를 알기위해 onStart를 사용
 
+    @Override
+    public void onStart() {
+        super.onStart();
 
+        //데이터가 변화되었을떄 타게 된다.
+        conditionRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String text = dataSnapshot.getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+button_close.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+
+        Toast.makeText(getContext(),"클릭시 에딧텍스트",Toast.LENGTH_SHORT);
+
+        conditionRef.setValue(edit_content.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>(){
+
+            @Override
+            public void onSuccess(Void aVoid) {
+            Log.d("성공","성공");
+            }
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Write failed
+                e.printStackTrace();
+            }
+        });
+
+        (getActivity()).findViewById(R.id.frame).setClickable(true);
+        Intent intentToBack=new Intent();
+        getActivity().setResult(Activity.RESULT_OK,intentToBack);
+        FragmentManager manager = getActivity().getSupportFragmentManager();
+        manager.beginTransaction().remove(WriteActivity.this).commit();
+        manager.popBackStack();
+    }
+});
+
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
 
         View view = inflater.inflate(R.layout.activity_write, container, false);
      //권한체크
@@ -56,15 +116,10 @@ public class WriteActivity extends Fragment {
             @Override
             public void onClick(View view) {
                 //일기장 작성한것 메인에 보내주기.
-                Intent intentToBack=new Intent();
-                String content =       edit_content.getText().toString();
-                intentToBack.putExtra("content",content);
-                getActivity().setResult(Activity.RESULT_OK,intentToBack);
-                getActivity().finish();
             }
         });
         textview_date=(TextView)view.findViewById(R.id.textview_date);
-        String today= getActivity().getIntent().getStringExtra("today").toString();
+        String today= getActivity().getIntent().getStringExtra("today");
 
         textview_date.setText(today);
         //캡쳐 버튼 클릭리스너만들기
@@ -72,6 +127,7 @@ public class WriteActivity extends Fragment {
         view.findViewById(R.id.button_camera).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent intent  = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null){
                     File photoFile =null;
@@ -89,11 +145,12 @@ public class WriteActivity extends Fragment {
                         intent.putExtra(MediaStore.EXTRA_OUTPUT,photoUri);
                         startActivityForResult(intent,REQUEST_IMAGE_CAPTURE);
                     }
-
                 }
             }
 
         });
+
+
         return view;
 
 

@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         frame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                frame.setClickable(false);
                 FragmentTransaction transaction= getSupportFragmentManager().beginTransaction();
                 Fragment writeActivity= new WriteActivity();
                 transaction.replace(R.id.frame,writeActivity);
